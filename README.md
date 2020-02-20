@@ -27,3 +27,4 @@ It was when I almost finished my plugin and got some useful information that I f
 
   ![pcap_demo](pcap_demo.png)
 
+* Filter adb traffic by `adb2 and !(usb.transfer_type == 0x1 or usb.transfer_type == 0x2)`

@@ -17,8 +17,14 @@ adb.fields = {command, local_id, remote_id, data_len, crc, magic, data, length_d
 
 
 function adb.dissector(tvb, pinfo, tree)
-	local t = tree:add(adb, tvb())
 	local p_command = tvb(0,4):string()
+	-- skip USBMS protocol
+	if string.sub(p_command, 1, 3) == "USB"
+	then
+		return
+	end
+	
+	local t = tree:add(adb, tvb())
 	local commands = {
 		CNXN=true,
 		SYNC=true,
