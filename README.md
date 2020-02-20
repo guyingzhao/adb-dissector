@@ -17,7 +17,7 @@ It was when I almost finished my plugin and got some useful information that I f
 
 * Swith to "Directories" tab indicates by following picture(depending on your local language):
 
-  ![wireshar_directories](wireshar_directories.png)
+  ![wireshark_directories](wireshark_directories.png)
 
 * Get plugin directory and put the adb.lua into it
 
@@ -25,5 +25,5 @@ It was when I almost finished my plugin and got some useful information that I f
 
 * Check the packet details  for a tree item named "ADB Message" like below:
 
-  ![pcap_demo](C:\Users\guying\workspace\adb_dissector\pcap_demo.png)
+  ![pcap_demo](pcap_demo.png)
 
