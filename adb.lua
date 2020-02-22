@@ -17,9 +17,9 @@ adb.fields = {command, local_id, remote_id, data_len, crc, magic, data, length_d
 
 
 function adb.dissector(tvb, pinfo, tree)
-	local p_command = tvb(0,4):string()
+	local v_command = tvb(0,4):string()
 	-- skip USBMS protocol
-	if string.sub(p_command, 1, 3) == "USB"
+	if string.sub(v_command, 1, 3) == "USB"
 	then
 		return
 	end
@@ -34,7 +34,7 @@ function adb.dissector(tvb, pinfo, tree)
 		CLSE=true,
 		WRTE=true
 	}
-	if not commands[p_command]
+	if not commands[v_command] or tvb:len() < 24
 	then
 		local actual_len = 0
 		actual_len = tvb:reported_len()
@@ -75,13 +75,13 @@ function adb.dissector(tvb, pinfo, tree)
 	pinfo.cols.protocol = "ADB"
 	if pinfo.port_type == 2 -- tcp
 	then
-		pinfo.cols.info = string.format("%s->%s %s[%s bytes]", pinfo.src_port, pinfo.dst_port, p_command, v_data_len:le_uint())
+		pinfo.cols.info = string.format("%s->%s %s[%s bytes]", pinfo.src_port, pinfo.dst_port, v_command, v_data_len:le_uint())
 	else
 		if tostring(pinfo.src) == "host"
 		then
-			pinfo.cols.info = string.format(">>> %s[%s bytes]", p_command, v_data_len:le_uint())
+			pinfo.cols.info = string.format(">>> %s[%s bytes]", v_command, v_data_len:le_uint())
 		else
-			pinfo.cols.info = string.format(">>> %s[%s bytes]", p_command, v_data_len:le_uint())
+			pinfo.cols.info = string.format("<<< %s[%s bytes]", v_command, v_data_len:le_uint())
 		end
 	end
 end
