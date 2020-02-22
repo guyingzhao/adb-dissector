@@ -40,11 +40,16 @@ function adb.dissector(tvb, pinfo, tree)
 		actual_len = tvb:reported_len()
 		local desc = string.format("%d[%d captured]", actual_len, tvb:len())
 		pinfo.cols.protocol = "ADBData"
-		if tostring(pinfo.src) == "host"
+		if pinfo.port_type == 2 -- tcp
 		then
-			pinfo.cols.info = string.format(">>> %d bytes", actual_len)
-		else
-			pinfo.cols.info = string.format("<<< %s bytes", actual_len)
+			pinfo.cols.info = string.format("%s->%s %s bytes", pinfo.src_port, pinfo.dst_port, actual_len)
+		else			
+			if tostring(pinfo.src) == "host"
+			then
+				pinfo.cols.info = string.format(">>> %d bytes", actual_len)
+			else
+				pinfo.cols.info = string.format("<<< %s bytes", actual_len)
+			end
 		end
 		t:add(length_desc, desc)
 		t:add(data, tvb())
@@ -68,7 +73,17 @@ function adb.dissector(tvb, pinfo, tree)
 		t:add(data, v_data)
 	end
 	pinfo.cols.protocol = "ADB"
-	pinfo.cols.info = string.format("%s[%s bytes]", p_command, v_data_len:le_uint())
+	if pinfo.port_type == 2 -- tcp
+	then
+		pinfo.cols.info = string.format("%s->%s %s[%s bytes]", pinfo.src_port, pinfo.dst_port, p_command, v_data_len:le_uint())
+	else
+		if tostring(pinfo.src) == "host"
+		then
+			pinfo.cols.info = string.format(">>> %s[%s bytes]", p_command, v_data_len:le_uint())
+		else
+			pinfo.cols.info = string.format(">>> %s[%s bytes]", p_command, v_data_len:le_uint())
+		end
+	end
 end
 
 DissectorTable.get("tcp.port"):add("1-65535", adb)
